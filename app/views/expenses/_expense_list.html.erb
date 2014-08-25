@@ -1,0 +1,59 @@
+<% unless @expenses.blank? %>
+  <table class="table table-striped" >
+    <thead>
+      <th>Id</th>
+      <th>user id</th>
+      <th>Name</th>
+      <th>category</th>
+      <th>description</th>
+      <th>date</th>
+      <th>status</th>
+      <th>explanation</th>    
+    </thead>
+    <tbody>
+      <% @expenses.each do |expense| %>
+        <tr>
+          <td><%= expense.id %></td>
+          <td> <%= expense.user_id %></td>
+          <td><%= expense.name %></td>
+          <td><%= expense.try(:category).try(:name) %></td>
+          <td><%= expense.try(:description) %></td>
+          <td><%= expense.date %></td>
+          <td><%= expense.status %></td>
+          
+          <% if expense.status == "In process" %>
+              <% if can? :status_update, expense %>
+                <td><button id="approved" type="button" class="explanationLink" value="<%= expense.id %>">Approved</button>
+                <button  id="canceled" type="button" class="explanationLink" value="<%= expense.id %>">Cancel</button></td>
+                <td></td>
+              <% end %>
+          <% else %>
+            <td><%= expense.explanation %></td>
+            <td>
+              <% if expense.status == "approved" %>
+                <% if expense.invoices.present? %>
+                  <%= link_to "Show Receipt", expense_invoices_path(expense.id), :target => "_blank"%>
+                <% end %>
+              <% end %>
+            </td>
+          <% end %>
+            
+          <td><%= link_to "edit", edit_expense_path(expense.id) %></td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+  <%= will_paginate @expenses %> 
+<% else %>
+<h1>No Records Found</h1>  
+<% end %>
+
+
+
+
+
+
+
+
+
+

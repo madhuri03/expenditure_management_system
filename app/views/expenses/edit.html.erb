@@ -1,0 +1,53 @@
+<%= nested_form_for @expense ,:html=> { :class => "form-horizontal"} do |f| %>
+  <div class="form-group">
+    <%= f.label :name, class: 'col-md-2' %>
+    <%= f.text_field :name , :class => "input col-md-10" %>
+    <%= alert_helper @expense.errors[:name] %>
+  </div>
+  <div class="form-group">
+    <%= f.label :categories, class: 'col-md-2' %>
+    <%= f.collection_select(:category_id, @categories, :id, :name, :include_blank => "select category", :class => "input col-md-10" ) %>
+    <%= alert_helper @expense.errors[:category] %>
+  </div>
+  <div class="form-group">
+    <%= f.label :number_of_item, class: 'col-md-2' %>
+    <%= f.text_field :number_of_item ,:class => "input col-md-10" %>
+    <%= alert_helper @expense.errors[:date] %>
+  </div>
+  <div class="form-group"> 
+    <%= f.label :price_per_item, class: 'col-md-2' %>
+    <%= f.text_field :price_per_item ,:class => "input col-md-10" %>
+    <%= alert_helper @expense.errors[:date] %>
+  </div>  
+  <div class="form-group">
+    <%= f.label :description, class: 'col-md-2' %>
+    <%= f.text_area :description, :class => "input col-md-10"  %>
+  </div> 
+  <div class="form-group">
+    <%= f.label :date, class: 'col-md-2' %>
+    <%= f.text_field :date ,:class => "date-picker input col-md-10" , :id => "request_date" %>
+    <%= alert_helper @expense.errors[:date] %>
+  </div>  
+  <% if @expense.status == Expense::APPROVED %>
+    <%= f.fields_for :invoices do |invoice| %>
+      <% if invoice.object.receipt_image.present? %>
+        <%= image_tag invoice.object.receipt_image.url(:thumb) %><br/>
+        Replace this receipt<%= invoice.file_field :receipt_image %><br/>   
+       <% else %>
+        <%= invoice.file_field :receipt_image %><br/>
+      <% end %>
+      <%= invoice.link_to_remove "Remove this attachment" %><br/><br/>
+    <% end %>
+    <%= f.link_to_add "Add Receipt", :invoices %><br/>
+ <% end %>
+  
+  <%= f. submit %><br/>
+  <%= link_to "back", expenses_path %>
+<% end %>
+
+<script>
+$('.date-picker').datepicker({
+    format: 'yyyy-mm-dd'
+  })
+</script>
+
